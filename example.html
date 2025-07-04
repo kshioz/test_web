@@ -1,0 +1,133 @@
+<html>
+  <head>
+    <title>音声認識機能の使用例</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .button {
+        background-color: #4caf50;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .button:hover {
+        background-color: #45a049;
+      }
+      .button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+      .status {
+        margin: 20px 0;
+        padding: 10px;
+        border-radius: 4px;
+        background-color: #f0f0f0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>音声認識機能の使用例</h1>
+
+    <div class="status" id="status">音声認識機能を読み込み中...</div>
+
+    <button class="button" id="startBtn" onclick="startSpeech()">
+      音声認識開始
+    </button>
+    <button class="button" id="stopBtn" onclick="stopSpeech()" disabled>
+      音声認識停止
+    </button>
+
+    <div
+      id="result"
+      style="
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #e8f5e8;
+        border-radius: 4px;
+        min-height: 50px;
+      "
+    >
+      認識結果がここに表示されます
+    </div>
+
+    <!-- 音声認識機能のモジュールを読み込み -->
+    <script src="speech-recognition.js"></script>
+
+    <script>
+      // ページ読み込み完了後に実行
+      document.addEventListener("DOMContentLoaded", function () {
+        // 音声認識機能が利用可能かチェック
+        if (
+          typeof window.startSpeechText === "function" &&
+          typeof window.endSpeechText === "function"
+        ) {
+          document.getElementById("status").textContent =
+            "音声認識機能が利用可能です";
+          document.getElementById("status").style.backgroundColor = "#d4edda";
+          document.getElementById("status").style.color = "#155724";
+        } else {
+          document.getElementById("status").textContent =
+            "音声認識機能が利用できません";
+          document.getElementById("status").style.backgroundColor = "#f8d7da";
+          document.getElementById("status").style.color = "#721c24";
+        }
+      });
+
+      // 音声認識開始
+      function startSpeech() {
+        try {
+          window.startSpeechText();
+          document.getElementById("startBtn").disabled = true;
+          document.getElementById("stopBtn").disabled = false;
+          document.getElementById("status").textContent = "音声認識中...";
+          document.getElementById("status").style.backgroundColor = "#fff3cd";
+          document.getElementById("status").style.color = "#856404";
+        } catch (error) {
+          console.error("音声認識開始エラー:", error);
+          document.getElementById("status").textContent =
+            "音声認識開始に失敗しました: " + error.message;
+          document.getElementById("status").style.backgroundColor = "#f8d7da";
+          document.getElementById("status").style.color = "#721c24";
+        }
+      }
+
+      // 音声認識停止
+      function stopSpeech() {
+        try {
+          window.endSpeechText();
+          document.getElementById("startBtn").disabled = false;
+          document.getElementById("stopBtn").disabled = true;
+          document.getElementById("status").textContent =
+            "音声認識が停止されました";
+          document.getElementById("status").style.backgroundColor = "#d4edda";
+          document.getElementById("status").style.color = "#155724";
+        } catch (error) {
+          console.error("音声認識停止エラー:", error);
+          document.getElementById("status").textContent =
+            "音声認識停止に失敗しました: " + error.message;
+          document.getElementById("status").style.backgroundColor = "#f8d7da";
+          document.getElementById("status").style.color = "#721c24";
+        }
+      }
+
+      // 音声認識結果を表示するためのカスタムイベントリスナー
+      // 実際の実装では、speech-recognition.jsでイベントを発火させる
+      document.addEventListener("speechResult", function (event) {
+        document.getElementById("result").textContent =
+          "認識結果: " + event.detail.transcript;
+      });
+    </script>
+  </body>
+</html>
